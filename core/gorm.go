@@ -2,17 +2,17 @@ package core
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gvb/global"
-	"log"
 	"time"
 )
 
 func InitGorm() *gorm.DB {
 	if global.Config.Mysql.Host == "" {
-		log.Println("未配置mysql，取消grom连接")
+		global.Log.Warnln("未配置mysql，取消grom连接")
 		return nil
 	}
 	dsn := global.Config.Mysql.Dsn()
@@ -29,8 +29,7 @@ func InitGorm() *gorm.DB {
 		Logger: mysqlLogger,
 	})
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("[%s] mysql连接失败", dsn))
-		//panic(err)
+		logrus.Fatalf(fmt.Sprintf("[%s] mysql连接失败", dsn))
 	}
 	sqlDb, _ := db.DB()
 	sqlDb.SetMaxIdleConns(10)               //最大空闲连接数
